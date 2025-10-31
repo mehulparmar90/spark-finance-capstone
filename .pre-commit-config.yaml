@@ -1,0 +1,177 @@
+# Pre-commit hooks configuration
+# See https://pre-commit.com for more information
+
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # Prevent large files from being committed
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+
+      # Check for files that would conflict in case-insensitive filesystems
+      - id: check-case-conflict
+
+      # Check for merge conflicts
+      - id: check-merge-conflict
+
+      # Check YAML files for parseable syntax
+      - id: check-yaml
+        args: ['--unsafe']  # Allow custom YAML tags
+
+      # Check TOML files for parseable syntax
+      - id: check-toml
+
+      # Check JSON files for parseable syntax
+      - id: check-json
+
+      # Ensure files end with a newline
+      - id: end-of-file-fixer
+
+      # Remove trailing whitespace
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+      # Detect private keys
+      - id: detect-private-key
+
+      # Check that executables have shebangs
+      - id: check-executables-have-shebangs
+
+      # Check for debugger imports (pdb, ipdb, etc.)
+      - id: debug-statements
+
+      # Sort requirements.txt files
+      - id: requirements-txt-fixer
+        files: requirements.*\.txt$
+
+  # Python code formatting with Black
+  - repo: https://github.com/psf/black
+    rev: 25.9.0
+    hooks:
+      - id: black
+        name: Format Python code with Black
+        args: ['--line-length=88']
+
+  # Python linting with Ruff (fast alternative to flake8, pylint)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.3
+    hooks:
+      # Linter
+      - id: ruff
+        name: Lint Python code with Ruff
+        args:
+          - --fix
+          - --exit-non-zero-on-fix
+        types_or: [python, pyi, jupyter]
+
+      # Formatter (alternative to black, but we're using black)
+      - id: ruff-format
+        name: Format Python code with Ruff
+        types_or: [python, pyi, jupyter]
+
+  # Python type checking with mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.18.2
+    hooks:
+      - id: mypy
+        name: Type check Python code with mypy
+        additional_dependencies:
+          - types-requests
+          - types-python-dateutil
+        args:
+          - --ignore-missing-imports
+          - --disallow-untyped-defs
+          - --no-implicit-optional
+        exclude: ^(tests/|docs/)
+
+  # Python unit tests with pytest
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run unit tests with pytest
+        entry: bash -c 'cd /Users/mparmar/workspaces/project-workspace/spark-finance-capstone && source venv/bin/activate && pytest tests/ -v --tb=short -m "unit" || true'
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: ^(tests/.*\.py|scripts/.*\.py|src/.*\.py)$
+        stages: [commit]
+
+  # Jupyter notebook checks
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.9.1
+    hooks:
+      # Format notebooks with black
+      - id: nbqa-black
+        name: Format Jupyter notebooks with Black
+        additional_dependencies: [black==25.9.0]
+
+      # Lint notebooks with ruff
+      - id: nbqa-ruff
+        name: Lint Jupyter notebooks with Ruff
+        additional_dependencies: [ruff==0.14.3]
+        args: [--fix]
+
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.43.0
+    hooks:
+      - id: markdownlint
+        name: Lint Markdown files
+        args: [--fix]
+
+  # Check for secrets/credentials (optional - commented out for now)
+  # - repo: https://github.com/Yelp/detect-secrets
+  #   rev: v1.5.0
+  #   hooks:
+  #     - id: detect-secrets
+  #       name: Detect secrets in code
+  #       args:
+  #         - '--baseline'
+  #         - '.secrets.baseline'
+  #       exclude: '\.env\.example$'
+
+  # Shell script linting (optional - commented out due to SSL issues)
+  # - repo: https://github.com/shellcheck-py/shellcheck-py
+  #   rev: v0.10.0.1
+  #   hooks:
+  #     - id: shellcheck
+  #       name: Lint shell scripts
+
+  # SQL formatting (optional - uncomment when you have SQL files)
+  # - repo: https://github.com/sqlfluff/sqlfluff
+  #   rev: 3.4.1
+  #   hooks:
+  #     - id: sqlfluff-lint
+  #       name: Lint SQL files
+  #       args: [--dialect, spark]
+  #     - id: sqlfluff-fix
+  #       name: Fix SQL files
+  #       args: [--dialect, spark]
+
+# Global configuration
+default_language_version:
+  python: python3
+
+# Files to exclude from all hooks
+exclude: |
+  (?x)^(
+    \.git/|
+    \.venv/|
+    venv/|
+    \.pytest_cache/|
+    __pycache__/|
+    \.mypy_cache/|
+    \.ruff_cache/|
+    build/|
+    dist/|
+    \.eggs/|
+    .*\.egg-info/|
+    spark-warehouse/|
+    derby\.log|
+    metastore_db/
+  )$
+
+# Hook execution settings
+fail_fast: false  # Continue running hooks even if one fails

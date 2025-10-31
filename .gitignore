@@ -1,0 +1,79 @@
+# Python Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / Packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment Variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Pre-commit
+.pre-commit-cache/
+
+# Ruff cache
+.ruff_cache/
+
+# mypy cache
+.mypy_cache/
+
+# Databricks
+.databricks/
+
+# Spark
+spark-warehouse/
+derby.log
+metastore_db/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project Files
+docs/tmp/*
